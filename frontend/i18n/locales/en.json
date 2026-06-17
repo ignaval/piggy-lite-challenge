@@ -1,0 +1,75 @@
+{
+  "app": {
+    "title": "Piggy Wallet",
+    "tagline": "Family finance, made simple."
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "logout": "Log out",
+    "back": "Back",
+    "language": "Language"
+  },
+  "common": {
+    "loading": "Loading…",
+    "optional": "optional",
+    "cancel": "Cancel",
+    "close": "Close",
+    "retry": "Retry",
+    "error": "Something went wrong.",
+    "amount": "Amount",
+    "note": "Note",
+    "submit": "Submit"
+  },
+  "login": {
+    "title": "Log in",
+    "description": "Paste a guardian token (or guardian id) from the backend seed to continue.",
+    "tokenLabel": "Guardian token or id",
+    "tokenPlaceholder": "guardian-… or a UUID",
+    "submit": "Continue",
+    "hint": "Run the backend seed (python -m app.seed) and copy the printed token here.",
+    "emptyError": "Please enter a guardian token or id."
+  },
+  "dashboard": {
+    "title": "Dependants",
+    "subtitle": "Fund your kids and track their balances.",
+    "empty": "No dependants yet.",
+    "loadError": "Could not load dependants.",
+    "balance": "Balance",
+    "view": "View",
+    "sendFunds": "Send funds"
+  },
+  "dependant": {
+    "loadError": "Could not load this dependant.",
+    "balance": "Balance",
+    "spend": "Spend",
+    "history": "Transaction history",
+    "noTransactions": "No transactions yet.",
+    "note": "Note"
+  },
+  "transaction": {
+    "type": {
+      "FUNDING": "Funding",
+      "SPEND": "Spend"
+    }
+  },
+  "fund": {
+    "title": "Send funds to {name}",
+    "amountLabel": "Amount to send",
+    "noteLabel": "Note",
+    "notePlaceholder": "e.g. weekly allowance",
+    "submit": "Send funds",
+    "submitting": "Sending…",
+    "success": "Sent {amount} to {name}.",
+    "amountError": "Enter an amount greater than 0."
+  },
+  "spend": {
+    "title": "Record a spend for {name}",
+    "amountLabel": "Amount to spend",
+    "noteLabel": "Note",
+    "notePlaceholder": "e.g. ice cream",
+    "submit": "Record spend",
+    "submitting": "Recording…",
+    "success": "Recorded a spend of {amount}.",
+    "amountError": "Enter an amount greater than 0."
+  }
+}

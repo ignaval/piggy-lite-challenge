@@ -1,0 +1,44 @@
+[project]
+name = "piggy-lite-backend"
+version = "0.1.0"
+description = "Piggy Lite — family finance starter backend (FastAPI + SQLModel)"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.27",
+    "sqlmodel>=0.0.16",
+    "pydantic-settings>=2.1",
+    "alembic>=1.13",
+    "httpx>=0.27",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.4",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.ruff.lint.per-file-ignores]
+# Relationship forward-refs must stay `Optional["X"]`: SQLModel/SQLAlchemy can't
+# resolve a stringified `"X" | None` annotation at mapper-config time.
+"app/models.py" = ["UP045"]

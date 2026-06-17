@@ -1,0 +1,75 @@
+{
+  "app": {
+    "title": "Piggy Wallet",
+    "tagline": "Finanzas familiares, sencillas."
+  },
+  "nav": {
+    "dashboard": "Panel",
+    "logout": "Cerrar sesión",
+    "back": "Volver",
+    "language": "Idioma"
+  },
+  "common": {
+    "loading": "Cargando…",
+    "optional": "opcional",
+    "cancel": "Cancelar",
+    "close": "Cerrar",
+    "retry": "Reintentar",
+    "error": "Algo salió mal.",
+    "amount": "Monto",
+    "note": "Nota",
+    "submit": "Enviar"
+  },
+  "login": {
+    "title": "Iniciar sesión",
+    "description": "Pega un token de guardián (o el id del guardián) del seed del backend para continuar.",
+    "tokenLabel": "Token o id de guardián",
+    "tokenPlaceholder": "guardian-… o un UUID",
+    "submit": "Continuar",
+    "hint": "Ejecuta el seed del backend (python -m app.seed) y copia aquí el token que imprime.",
+    "emptyError": "Ingresa un token o id de guardián."
+  },
+  "dashboard": {
+    "title": "Dependientes",
+    "subtitle": "Financia a tus hijos y controla sus saldos.",
+    "empty": "Aún no hay dependientes.",
+    "loadError": "No se pudieron cargar los dependientes.",
+    "balance": "Saldo",
+    "view": "Ver",
+    "sendFunds": "Enviar fondos"
+  },
+  "dependant": {
+    "loadError": "No se pudo cargar este dependiente.",
+    "balance": "Saldo",
+    "spend": "Gastar",
+    "history": "Historial de transacciones",
+    "noTransactions": "Aún no hay transacciones.",
+    "note": "Nota"
+  },
+  "transaction": {
+    "type": {
+      "FUNDING": "Ingreso",
+      "SPEND": "Gasto"
+    }
+  },
+  "fund": {
+    "title": "Enviar fondos a {name}",
+    "amountLabel": "Monto a enviar",
+    "noteLabel": "Nota",
+    "notePlaceholder": "p. ej. mesada semanal",
+    "submit": "Enviar fondos",
+    "submitting": "Enviando…",
+    "success": "Se enviaron {amount} a {name}.",
+    "amountError": "Ingresa un monto mayor que 0."
+  },
+  "spend": {
+    "title": "Registrar un gasto de {name}",
+    "amountLabel": "Monto a gastar",
+    "noteLabel": "Nota",
+    "notePlaceholder": "p. ej. helado",
+    "submit": "Registrar gasto",
+    "submitting": "Registrando…",
+    "success": "Se registró un gasto de {amount}.",
+    "amountError": "Ingresa un monto mayor que 0."
+  }
+}

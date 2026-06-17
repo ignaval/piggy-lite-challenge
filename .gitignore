@@ -1,0 +1,14 @@
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Belt-and-suspenders (each app also has its own .gitignore)
+**/.venv/
+**/node_modules/
+**/.next/
+*.db
+.env
+**/.env.local
