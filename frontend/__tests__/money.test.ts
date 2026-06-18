@@ -43,4 +43,15 @@ describe("normalizeAmount", () => {
     expect(normalizeAmount("")).toBeNull();
     expect(normalizeAmount("abc")).toBeNull();
   });
+
+  it("rejects amounts with more than two decimal places instead of rounding", () => {
+    // Number("1.005").toFixed(2) would silently produce "1.00"; we reject.
+    expect(normalizeAmount("1.005")).toBeNull();
+    expect(normalizeAmount("1.999")).toBeNull();
+  });
+
+  it("strips leading zeros and pads fractional digits", () => {
+    expect(normalizeAmount("007.5")).toBe("7.50");
+    expect(normalizeAmount("0.50")).toBe("0.50");
+  });
 });

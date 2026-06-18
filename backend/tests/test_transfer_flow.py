@@ -129,3 +129,52 @@ def test_detail_lists_transactions_newest_first(
     # Most recent (the spend) comes first.
     assert txns[0]["type"] == "SPEND"
     assert txns[1]["type"] == "FUNDING"
+
+
+def test_fund_rejects_more_than_two_decimals(
+    client: TestClient, dependant: Dependant
+):
+    """A sub-cent amount must be rejected, not silently rounded to 0.00."""
+    resp = client.post(
+        f"/api/v1/dependants/{dependant.id}/fund",
+        json={"amount": "0.001"},
+    )
+    assert resp.status_code == 400
+    assert "decimal" in resp.json()["detail"].lower()
+    # Balance is untouched.
+    detail = client.get(f"/api/v1/dependants/{dependant.id}").json()
+    assert detail["balance"] == "20.00"
+
+
+def test_spend_rejects_more_than_two_decimals(
+    client: TestClient, dependant: Dependant
+):
+    resp = client.post(
+        f"/api/v1/dependants/{dependant.id}/spend",
+        json={"amount": "1.005"},
+    )
+    assert resp.status_code == 400
+    assert "decimal" in resp.json()["detail"].lower()
+
+
+def test_rejects_non_finite_amount(client: TestClient, dependant: Dependant):
+    """NaN/Infinity must be rejected (4xx), never applied or 500."""
+    for bad in ("NaN", "Infinity"):
+        resp = client.post(
+            f"/api/v1/dependants/{dependant.id}/fund",
+            json={"amount": bad},
+        )
+        assert resp.status_code in (400, 422), f"{bad} -> {resp.status_code}"
+
+
+def test_amount_is_normalized_to_two_decimals(
+    client: TestClient, dependant: Dependant
+):
+    resp = client.post(
+        f"/api/v1/dependants/{dependant.id}/fund",
+        json={"amount": "10.5"},
+    )
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["transaction"]["amount"] == "10.50"
+    assert body["balance"] == "30.50"

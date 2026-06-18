@@ -20,6 +20,11 @@
     "note": "Note",
     "submit": "Submit"
   },
+  "errors": {
+    "network": "Network error. Is the backend running?",
+    "session": "Your session is invalid. Please log in again.",
+    "requestFailed": "Request failed ({status})."
+  },
   "login": {
     "title": "Log in",
     "description": "Paste a guardian token (or guardian id) from the backend seed to continue.",

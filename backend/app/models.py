@@ -8,6 +8,10 @@ The domain graph is intentionally tiny:
 One implicit currency. Money is stored as ``Decimal`` and serialized to JSON as
 a 2-decimal string at the schema layer (see ``app/schemas.py``).
 
+All timestamps are timezone-aware UTC — ``created_at`` columns use
+``DateTime(timezone=True)`` and default to ``datetime.now(UTC)``. Any time-window
+logic (e.g. a weekly/monthly spending-limit period) should be computed in UTC.
+
 NOTE: we deliberately do *not* use ``from __future__ import annotations`` here,
 and relationship attributes use ``Optional["X"]`` (not ``"X" | None``).
 SQLModel/SQLAlchemy resolves relationship targets from these annotations at
@@ -21,6 +25,7 @@ from enum import StrEnum
 from typing import Optional
 from uuid import UUID, uuid4
 
+from sqlalchemy import DateTime
 from sqlmodel import Field, Relationship, SQLModel
 
 
@@ -38,7 +43,9 @@ class TransactionType(StrEnum):
 class Guardian(SQLModel, table=True):
     id: UUID = Field(default_factory=uuid4, primary_key=True)
     first_name: str
-    created_at: datetime = Field(default_factory=_utcnow)
+    created_at: datetime = Field(
+        default_factory=_utcnow, sa_type=DateTime(timezone=True)
+    )
 
     dependants: list["Dependant"] = Relationship(back_populates="guardian")
 
@@ -47,7 +54,9 @@ class Dependant(SQLModel, table=True):
     id: UUID = Field(default_factory=uuid4, primary_key=True)
     first_name: str
     guardian_id: UUID = Field(foreign_key="guardian.id", index=True)
-    created_at: datetime = Field(default_factory=_utcnow)
+    created_at: datetime = Field(
+        default_factory=_utcnow, sa_type=DateTime(timezone=True)
+    )
 
     guardian: Optional["Guardian"] = Relationship(back_populates="dependants")
     balance: Optional["Balance"] = Relationship(
@@ -71,6 +80,8 @@ class LedgerTransaction(SQLModel, table=True):
     type: TransactionType
     amount: Decimal = Field(max_digits=18, decimal_places=2)
     note: str | None = None
-    created_at: datetime = Field(default_factory=_utcnow, index=True)
+    created_at: datetime = Field(
+        default_factory=_utcnow, sa_type=DateTime(timezone=True), index=True
+    )
 
     dependant: Optional["Dependant"] = Relationship(back_populates="transactions")

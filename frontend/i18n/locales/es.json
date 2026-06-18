@@ -20,6 +20,11 @@
     "note": "Nota",
     "submit": "Enviar"
   },
+  "errors": {
+    "network": "Error de red. ¿El backend está en ejecución?",
+    "session": "Tu sesión no es válida. Inicia sesión de nuevo.",
+    "requestFailed": "La solicitud falló ({status})."
+  },
   "login": {
     "title": "Iniciar sesión",
     "description": "Pega un token de guardián (o el id del guardián) del seed del backend para continuar.",

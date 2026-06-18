@@ -6,6 +6,7 @@ the test/E2E seed endpoint can't drift apart.
 
 from __future__ import annotations
 
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 
 from sqlmodel import Session, delete
@@ -31,8 +32,14 @@ def wipe_all(session: Session) -> None:
 def seed_demo(session: Session) -> Guardian:
     """Wipe, then create guardian Alex with dependants Mia (25.00) & Leo (8.00).
 
-    Each dependant gets a couple of ledger entries so history views aren't
-    empty. Returns the created guardian.
+    Mia's seeded history is intentionally shaped for the spending-limits
+    feature: she has two SPEND entries inside the last 7 days and one older
+    spend (10 days ago). Once a candidate builds limits, a weekly "usage this
+    period" view has data immediately, and the older spend lets them verify that
+    a period window excludes it. (Transaction amounts are illustrative history
+    and do not need to reconcile exactly with the starting balances above.)
+
+    Returns the created guardian.
     """
     wipe_all(session)
 
@@ -49,8 +56,7 @@ def seed_demo(session: Session) -> Guardian:
     session.add(Balance(dependant_id=mia.id, amount=Decimal("25.00")))
     session.add(Balance(dependant_id=leo.id, amount=Decimal("8.00")))
 
-    # A small, plausible history. Amounts here are illustrative and do not need
-    # to reconcile exactly with the starting balances above.
+    now = datetime.now(UTC)
     session.add_all(
         [
             LedgerTransaction(
@@ -58,24 +64,42 @@ def seed_demo(session: Session) -> Guardian:
                 type=TransactionType.FUNDING,
                 amount=Decimal("30.00"),
                 note="Weekly allowance",
+                created_at=now - timedelta(days=6),
             ),
             LedgerTransaction(
                 dependant_id=mia.id,
                 type=TransactionType.SPEND,
-                amount=Decimal("5.00"),
+                amount=Decimal("4.00"),
                 note="Snacks",
+                created_at=now - timedelta(days=1),
+            ),
+            LedgerTransaction(
+                dependant_id=mia.id,
+                type=TransactionType.SPEND,
+                amount=Decimal("3.50"),
+                note="Bus fare",
+                created_at=now - timedelta(days=3),
+            ),
+            LedgerTransaction(
+                dependant_id=mia.id,
+                type=TransactionType.SPEND,
+                amount=Decimal("6.00"),
+                note="Older toy (outside the last 7 days)",
+                created_at=now - timedelta(days=10),
             ),
             LedgerTransaction(
                 dependant_id=leo.id,
                 type=TransactionType.FUNDING,
                 amount=Decimal("10.00"),
                 note="Birthday gift",
+                created_at=now - timedelta(days=4),
             ),
             LedgerTransaction(
                 dependant_id=leo.id,
                 type=TransactionType.SPEND,
                 amount=Decimal("2.00"),
                 note="Comic book",
+                created_at=now - timedelta(days=2),
             ),
         ]
     )

@@ -42,6 +42,10 @@ uvicorn app.main:app --reload
 ($25.00) and **Leo** ($8.00) — and prints a token like
 `guardian-3f2a…`. Copy it. Interactive API docs live at http://localhost:8000/docs.
 
+Mia's seeded history includes spends both inside and outside the last 7 days, so
+once you build limits you can eyeball a weekly usage window (and its reset)
+right away.
+
 ### 2. Frontend → http://localhost:3000
 
 ```bash
@@ -84,6 +88,8 @@ Backend   app/api/routes/dependants.py   ← thin route, just parses + delegates
 - **i18n is mandatory.** All user-facing text comes from
   `frontend/i18n/locales/en.json` + `es.json` via `useTranslations`.
   **Never hardcode user-facing strings** — add a key to **both** locale files.
+- **Timestamps are UTC.** `created_at` is timezone-aware UTC; compute any time
+  windows (e.g. a spending-limit period) in UTC.
 - The backend auto-creates tables on startup, **and** ships Alembic so you can
   do the real "add a model → generate a migration" workflow
   (`alembic revision --autogenerate -m "…"`).

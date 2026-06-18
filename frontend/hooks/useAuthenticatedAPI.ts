@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useMemo } from "react";
+import { useTranslations } from "next-intl";
 
 import { clearToken, getToken } from "@/lib/auth";
 
@@ -37,8 +38,14 @@ function extractDetail(body: unknown, fallback: string): string {
  * Centralized authenticated fetch wrapper. Reads the token from localStorage on
  * each call, prefixes `/api/v1`, and returns a typed `{ data, error }` instead
  * of throwing — callers (and React Query hooks) branch on `error`.
+ *
+ * The wrapper's own user-facing messages (network / session / fallback) are
+ * translated via the `errors` i18n namespace. Backend error `detail` strings
+ * are surfaced verbatim and treated as developer-facing (see the README) — if
+ * you want them localized, map error codes to i18n keys client-side.
  */
 export function useAuthenticatedAPI() {
+  const t = useTranslations("errors");
   const request = useCallback(
     async <T>(
       path: string,
@@ -58,13 +65,13 @@ export function useAuthenticatedAPI() {
           headers,
         });
       } catch {
-        return { data: null, error: "Network error. Is the backend running?" };
+        return { data: null, error: t("network") };
       }
 
       if (response.status === 401) {
         // Token is missing/invalid — drop it so the app can route to /login.
         clearToken();
-        return { data: null, error: "Your session is invalid. Please log in again." };
+        return { data: null, error: t("session") };
       }
 
       let body: unknown = null;
@@ -80,13 +87,16 @@ export function useAuthenticatedAPI() {
       if (!response.ok) {
         return {
           data: null,
-          error: extractDetail(body, `Request failed (${response.status}).`),
+          error: extractDetail(
+            body,
+            t("requestFailed", { status: response.status }),
+          ),
         };
       }
 
       return { data: (body as T) ?? null, error: null };
     },
-    [],
+    [t],
   );
 
   const get = useCallback(

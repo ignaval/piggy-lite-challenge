@@ -50,6 +50,10 @@ Let a guardian cap how much a dependant spends over a period.
    and frontend (set the limit + see usage), with **tests**, and **all new UI
    text in i18n** (no hardcoded strings — note the existing convention).
 
+   _Backend API error messages (the JSON `detail` strings) are developer-facing
+   — you don't need to translate those. It's **your own UI strings** that must be
+   internationalized._
+
 ### The spec is intentionally incomplete
 
 Part of what we're evaluating is the decisions you make on the open questions.
@@ -66,6 +70,14 @@ Among them:
 Make reasonable calls, keep them consistent, and be ready to defend them.
 There's no single right answer — we want your judgment.
 
+### Cases worth thinking about
+
+We'll look at how your solution behaves (and how you test it) for cases like:
+no limit set; updating or removing a limit; a spend exactly **at** the limit vs.
+just **over** it; usage at a period boundary / reset; and what happens when a
+spend fails **both** the balance check and the limit check (which error wins?).
+You don't have to handle every one — but show you considered them.
+
 ### Nice to have (only if time allows — don't sacrifice the core)
 
 Per-category limits; a soft warning at e.g. 80%; concurrency safety; richer
@@ -80,7 +92,8 @@ tests; polished UX.
    (e.g. an `/ai-transcripts` folder) or a linked doc. Claude Code: the session
    transcript / `.jsonl` or a copy-paste is fine. Cursor/Codex: export or
    screenshots. **Messy, exploratory prompting is fine** — we want your real
-   process, not a cleaned-up version.
+   process, not a cleaned-up version. **Redact any secrets, API keys, tokens, or
+   personal information before sharing.**
 3. **A short reflection** (`REFLECTION.md`, ½–1 page):
    - How did you use AI tools — what did you delegate vs. write/decide yourself?
    - Where did the AI suggest something you **overrode or corrected**, and why?

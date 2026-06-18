@@ -1,13 +1,14 @@
 // Money helpers. Backend sends/receives decimal STRINGS (2 dp). We never do
-// floating-point math on balances here — we only format for display and
-// normalize user input before sending it back as a string.
+// floating-point math on balances here — we format for display and normalize
+// user input (via string rules, not floats) before sending it back as a string.
 
 const CURRENCY_SYMBOL = "$";
 
 /**
- * Format a decimal money string (e.g. "12.5") for display (e.g. "$12.50").
- * Falls back gracefully to "$0.00" for empty/invalid input so the UI never
- * renders "NaN".
+ * Format a money string from the API (e.g. "12.5") for display (e.g. "$12.50").
+ * Display-only: the input is a trusted 2-dp string from the backend, so using
+ * Number() purely for locale grouping here is safe. Falls back to "$0.00" for
+ * empty/invalid input so the UI never renders "NaN".
  */
 export function formatMoney(amount: string | null | undefined): string {
   if (amount === null || amount === undefined || amount.trim() === "") {
@@ -29,19 +30,28 @@ export function formatMoney(amount: string | null | undefined): string {
 
 /**
  * Normalize raw user input ("10", "10.5", " 10.50 ") into a canonical
- * 2-decimal string ("10.00", "10.50") suitable for the API. Returns null when
- * the input is not a positive number, so callers can show a validation error.
+ * 2-decimal string ("10.00", "10.50") for the API — using string/regex rules,
+ * never floating-point math. Returns null when the input is not a positive
+ * number with at most 2 decimal places, so callers can show a validation error.
+ *
+ * Rejecting >2 dp (rather than silently rounding, which `Number(x).toFixed(2)`
+ * does — e.g. "1.005" → "1.00") keeps money exact and matches the backend,
+ * which also rejects sub-cent amounts.
  */
 export function normalizeAmount(input: string): string | null {
   const trimmed = input.trim();
-  if (trimmed === "") {
+
+  // digits, optional single dot followed by 1–2 fractional digits
+  if (!/^\d+(\.\d{1,2})?$/.test(trimmed)) {
+    return null;
+  }
+  // must be strictly greater than zero
+  if (/^0+(\.0{1,2})?$/.test(trimmed)) {
     return null;
   }
 
-  const parsed = Number(trimmed);
-  if (!Number.isFinite(parsed) || parsed <= 0) {
-    return null;
-  }
-
-  return parsed.toFixed(2);
+  const [whole, frac = ""] = trimmed.split(".");
+  const cents = `${frac}00`.slice(0, 2);
+  const normalizedWhole = whole.replace(/^0+(?=\d)/, "");
+  return `${normalizedWhole}.${cents}`;
 }

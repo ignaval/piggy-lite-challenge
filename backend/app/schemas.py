@@ -28,15 +28,22 @@ def _to_decimal(value: object) -> Decimal:
     """Coerce incoming JSON (string or number) into a Decimal.
 
     Strings are preferred (no float imprecision). We deliberately do NOT clamp
-    sign here — ``amount > 0`` is enforced in the service layer so the API can
-    return a clean 400 with a helpful message.
+    sign or scale here — positivity and the 2-decimal rule are enforced in the
+    service layer so the API returns a clean 400 with a helpful message.
     """
     if isinstance(value, Decimal):
-        return value
-    try:
-        return Decimal(str(value))
-    except (ArithmeticError, ValueError) as exc:  # pragma: no cover - defensive
-        raise ValueError("amount must be a valid decimal number") from exc
+        decimal_value = value
+    else:
+        try:
+            decimal_value = Decimal(str(value))
+        except (ArithmeticError, ValueError) as exc:
+            raise ValueError("amount must be a valid decimal number") from exc
+    # Reject NaN/Infinity here so the validation error itself stays
+    # JSON-serializable (a non-finite value would otherwise blow up the error
+    # response with "Out of range float values are not JSON compliant").
+    if not decimal_value.is_finite():
+        raise ValueError("amount must be a finite number")
+    return decimal_value
 
 
 # Decimal that accepts string/number input and always renders as "0.00".

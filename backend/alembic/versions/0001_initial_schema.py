@@ -34,14 +34,14 @@ def upgrade() -> None:
     op.create_table('guardian',
     sa.Column('id', sa.Uuid(), nullable=False),
     sa.Column('first_name', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
-    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('dependant',
     sa.Column('id', sa.Uuid(), nullable=False),
     sa.Column('first_name', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('guardian_id', sa.Uuid(), nullable=False),
-    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
     sa.ForeignKeyConstraint(['guardian_id'], ['guardian.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -60,7 +60,7 @@ def upgrade() -> None:
     sa.Column('type', sa.Enum('FUNDING', 'SPEND', name='transactiontype'), nullable=False),
     sa.Column('amount', sa.Numeric(precision=18, scale=2), nullable=False),
     sa.Column('note', sqlmodel.sql.sqltypes.AutoString(), nullable=True),
-    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
     sa.ForeignKeyConstraint(['dependant_id'], ['dependant.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
