@@ -19,9 +19,45 @@ Each app has its own `README.md` with the full details. Quick start below.
 
 ## Quick start
 
+Two ways to run it. **Docker is the easy path** — no local Python/Node/uv
+needed, and it matches the real Piggy stack (docker-compose + Postgres).
+
+### Option A — Docker (recommended)
+
+Requires Docker Desktop. From the repo root:
+
+```bash
+docker compose up --build      # Postgres + backend (:8000) + frontend (:3000)
+```
+
+Then, in a second terminal, seed demo data (prints a login token):
+
+```bash
+docker compose exec backend python -m app.seed
+```
+
+Open http://localhost:3000 and paste the printed `guardian-…` token at
+`/login`. Run the suites inside the containers:
+
+```bash
+docker compose exec backend pytest -q
+docker compose exec frontend npm run test
+```
+
+Tear down (add `-v` to also drop the Postgres volume):
+
+```bash
+docker compose down
+```
+
+> Docker runs **Postgres** (like real Piggy); running locally (Option B) uses
+> **SQLite** for zero setup. Same code — only `DATABASE_URL` differs.
+
+### Option B — run locally (no Docker)
+
 Run the **backend first** (the frontend talks to it), then the frontend.
 
-### 1. Backend → http://localhost:8000
+#### 1. Backend → http://localhost:8000
 
 ```bash
 cd backend
@@ -46,7 +82,7 @@ Mia's seeded history includes spends both inside and outside the last 7 days, so
 once you build limits you can eyeball a weekly usage window (and its reset)
 right away.
 
-### 2. Frontend → http://localhost:3000
+#### 2. Frontend → http://localhost:3000
 
 ```bash
 cd frontend

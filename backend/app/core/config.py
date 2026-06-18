@@ -19,8 +19,13 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "Piggy Lite"
     API_V1_PREFIX: str = "/api/v1"
 
-    # Database — SQLite file by default; zero setup required.
+    # Database — SQLite file by default; zero setup required. The Docker setup
+    # overrides this with a Postgres URL (closer to the real Piggy stack).
     DATABASE_URL: str = "sqlite:///./piggy_lite.db"
+
+    # Create tables on startup (convenient for the zero-setup SQLite path).
+    # Docker sets this false and runs Alembic migrations on boot instead.
+    CREATE_TABLES_ON_STARTUP: bool = True
 
     # Secret guarding the /e2e/* helper routes. Fine to keep the default
     # locally; override it anywhere it actually matters.

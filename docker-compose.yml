@@ -1,0 +1,55 @@
+# Local dev stack: Postgres + FastAPI backend + Next.js frontend.
+# Mirrors the real Piggy setup (docker-compose + Postgres). No local Python,
+# Node, or uv required — just Docker.
+#
+#   docker compose up --build
+#   docker compose exec backend python -m app.seed   # seed + print login token
+#
+name: piggy-lite
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: piggy
+      POSTGRES_PASSWORD: piggy
+      POSTGRES_DB: piggy_lite
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U piggy -d piggy_lite"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # Postgres in Docker (real Piggy uses Postgres); bare-metal defaults to SQLite.
+      DATABASE_URL: postgresql+psycopg://piggy:piggy@db:5432/piggy_lite
+      # Schema managed by Alembic migrations here, not create_all on startup.
+      CREATE_TABLES_ON_STARTUP: "false"
+    command: sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+
+  frontend:
+    build: ./frontend
+    depends_on:
+      - backend
+    environment:
+      # Read by the browser, so it points at the host-published backend port.
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+volumes:
+  pgdata:

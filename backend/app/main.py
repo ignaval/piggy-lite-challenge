@@ -18,8 +18,10 @@ from app.core.db import create_db_and_tables
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Create tables on boot — no migration step required to run locally.
-    create_db_and_tables()
+    # Create tables on boot for the zero-setup local path. Disabled in Docker,
+    # where Alembic migrations run on startup instead (see docker-compose.yml).
+    if settings.CREATE_TABLES_ON_STARTUP:
+        create_db_and_tables()
     yield
 
 

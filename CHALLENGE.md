@@ -31,8 +31,10 @@ the product:
   and an i18n setup (`en` / `es`).
 
 👉 **Start by getting it running and reading how a transaction flows
-end-to-end today.** Each app's `README.md` has run/seed/test instructions. The
-root `README.md` points you at the spend path.
+end-to-end today.** The quickest way to boot the whole stack is
+`docker compose up` (see the root `README.md`); there's also a no-Docker path.
+Each app's `README.md` has run/seed/test instructions, and the root
+`README.md` points you at the spend path.
 
 ## Your task: add Spending Limits
 
