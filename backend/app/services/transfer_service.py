@@ -68,7 +68,11 @@ def _validate_amount(amount: Decimal) -> Decimal:
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="amount must be greater than 0",
         )
-    if amount != amount.quantize(_CENTS, rounding=ROUND_HALF_UP):
+    # Reject anything finer than cent scale — including a trailing-zero "1.230"
+    # (value 1.23) — so the 2-decimal-string contract matches the frontend
+    # exactly. ``exponent`` is a plain int here (non-finite is rejected above);
+    # a value-based check (``!= quantize``) would let "1.230" slip through.
+    if amount.as_tuple().exponent < -2:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="amount cannot have more than 2 decimal places",

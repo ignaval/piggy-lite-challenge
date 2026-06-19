@@ -100,7 +100,7 @@ alembic upgrade head
 
 `alembic/env.py` pulls the DB URL from `app.core.config.settings` and the target
 metadata from `SQLModel.metadata`, so autogenerate sees your models. The initial
-migration lives at `alembic/versions/0001_initial.py`.
+migration lives at `alembic/versions/0001_initial_schema.py`.
 
 ---
 
@@ -113,8 +113,8 @@ All amounts are decimal **strings** (e.g. `"10.00"`). Auth is
 | --- | --- | --- | --- |
 | `GET /api/v1/dependants` | — | `200 [{ id, first_name, balance }]` | current guardian's dependants |
 | `GET /api/v1/dependants/{id}` | — | `200 { id, first_name, balance, transactions[] }` | newest-first, last ~20; `404` if not yours |
-| `POST /api/v1/dependants/{id}/fund` | `{ amount, note? }` | `200 { transaction, balance }` | `400` on amount ≤ 0 |
-| `POST /api/v1/dependants/{id}/spend` | `{ amount, note? }` | `200 { transaction, balance }` | `400` on amount ≤ 0 or insufficient balance |
+| `POST /api/v1/dependants/{id}/fund` | `{ amount, note? }` | `200 { transaction, balance }` | `400` on invalid amount (≤ 0, > 2 decimal places, or non-finite) |
+| `POST /api/v1/dependants/{id}/spend` | `{ amount, note? }` | `200 { transaction, balance }` | `400` on invalid amount (as above) or insufficient balance |
 
 A `transaction` is `{ id, type: "FUNDING"|"SPEND", amount, note, created_at }`.
 
@@ -149,7 +149,7 @@ belongs.
 2. **Service** — `app/services/transfer_service.py` → `spend(...)`. This is the
    single home for the rules:
    - resolve + authorize the dependant (404 if it isn't this guardian's),
-   - validate `amount > 0` (400 otherwise),
+   - validate the amount — finite, `> 0`, at most 2 decimal places (400 otherwise),
    - validate **sufficient balance** (400 `"Insufficient balance"` otherwise),
    - decrement `Balance` and append a `SPEND` `LedgerTransaction`, committed
      together.

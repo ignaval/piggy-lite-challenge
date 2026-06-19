@@ -157,6 +157,23 @@ def test_spend_rejects_more_than_two_decimals(
     assert "decimal" in resp.json()["detail"].lower()
 
 
+def test_rejects_trailing_zero_sub_cent_amount(
+    client: TestClient, dependant: Dependant
+):
+    """A 3-decimal string whose value is 2 dp (e.g. "1.230") is still rejected,
+    matching the frontend: the contract is 2-decimal *strings*, not just
+    2-decimal *values*."""
+    resp = client.post(
+        f"/api/v1/dependants/{dependant.id}/fund",
+        json={"amount": "1.230"},
+    )
+    assert resp.status_code == 400
+    assert "decimal" in resp.json()["detail"].lower()
+    # Balance is untouched.
+    detail = client.get(f"/api/v1/dependants/{dependant.id}").json()
+    assert detail["balance"] == "20.00"
+
+
 def test_rejects_non_finite_amount(client: TestClient, dependant: Dependant):
     """NaN/Infinity must be rejected (4xx), never applied or 500."""
     for bad in ("NaN", "Infinity"):

@@ -92,8 +92,14 @@ feature) must follow it.
 ```bash
 npm run test        # Vitest unit tests (e.g. the money formatter)
 npm run test:unit   # same, single run
-npm run test:e2e    # Playwright browser E2E (needs the backend running + seedable)
+npm run test:e2e    # Playwright browser E2E — run on the host (needs the backend running + seedable)
 ```
+
+Run E2E from the host, not inside the Docker container. One-time host setup:
+`npm install` (local deps) + `npx playwright install` (the browser). It then
+drives the published `:3000` / `:8000` ports, which the Docker stack or a local
+backend+frontend both expose. (Docker-path candidates need this local install
+even though running the app itself needs no local Node.)
 
 The Playwright spec (`e2e/tests/login.spec.ts`) seeds the backend via
 `POST /api/v1/e2e/seed` (header `X-E2E-Secret`, default `dev-e2e-secret`), logs

@@ -141,8 +141,15 @@ cd frontend
 npm run test        # Vitest unit tests
 npm run typecheck   # tsc --noEmit
 npm run lint
-npm run test:e2e    # Playwright (needs the backend running + seeded)
+npm run test:e2e    # Playwright E2E — host-only (see note below)
 ```
+
+> **Playwright E2E runs on the host, not inside the Docker container.** It drives
+> the published `:3000`/`:8000` ports — so it works whether the stack is up via
+> Docker (Option A) or running locally (Option B) — but the lean frontend image
+> ships no browser. One-time host setup: `cd frontend && npm install && npx
+> playwright install`, then `npm run test:e2e`. (Even Docker-path users need this
+> single local install for E2E, though running the app itself needs no local Node.)
 
 There's an end-to-end test seam mirroring the real product: the backend exposes
 `POST /api/v1/e2e/seed` and `/cleanup` (header `X-E2E-Secret: dev-e2e-secret`),
