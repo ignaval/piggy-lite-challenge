@@ -12,7 +12,3 @@ Thumbs.db
 *.db
 .env
 **/.env.local
-
-# Internal: keep reviewer notes out of the candidate-facing repo (see the file's
-# header). Delete this line if you maintain a separate internal source repo.
-/NOTES_FOR_REVIEWERS.md
