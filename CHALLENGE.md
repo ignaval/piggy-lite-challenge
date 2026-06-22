@@ -52,9 +52,23 @@ Let a guardian cap how much a dependant spends over a period.
    and frontend (set the limit + see usage), with **tests**, and **all new UI
    text in i18n** (no hardcoded strings — note the existing convention).
 
-   _Backend API error messages (the JSON `detail` strings) are developer-facing
-   — you don't need to translate those. It's **your own UI strings** that must be
-   internationalized._
+   _The backend's existing error `detail` strings (e.g. "Insufficient balance")
+   are developer-facing — the starter surfaces them to the user verbatim as a
+   deliberate simplification, and you don't need to retrofit i18n onto them. But
+   any **new** user-facing message you introduce — including a "limit exceeded"
+   error — must be localized. If you surface it from the backend, return a stable
+   error **code** (or otherwise make it machine-readable) and map it to an i18n
+   key on the client; don't render a hardcoded English `detail` inside the
+   Spanish UI._
+
+**Scope notes (so you don't over-build).** Piggy Lite is **single-currency** —
+one implicit 2-decimal currency — and has **no dependant-facing UI or login**: a
+guardian records spends on a dependant's behalf, so "enforced when a dependant
+spends" means the spend flow/endpoint, not a separate kid app. And **the
+smallest complete slice**, if time is tight, is one period type (e.g. a rolling
+7-day window), block-only enforcement, and a usage indicator on the existing
+guardian dependant view — with a migration and tests. Ship that end-to-end
+before touching anything under _Nice to have_.
 
 ### The spec is intentionally incomplete
 
@@ -85,18 +99,35 @@ You don't have to handle every one — but show you considered them.
 Per-category limits; a soft warning at e.g. 80%; concurrency safety; richer
 tests; polished UX.
 
+### We may dig into these in the live review
+
+You won't build these, but be ready to talk through them:
+
+- In the real Piggy, a dependant's money leaves through **several** transfer
+  paths (internal spends, external withdrawals, …), not a single `spend()`.
+  Where would a spending-limit rule live so it covers **all** of them, and which
+  transfer types should count toward "spend"?
+- Piggy Lite is single-currency; in production, balances are per
+  **asset/ticker** at higher precision. How would you model and enforce limits
+  **per asset**?
+- The starter's `spend()` reads the balance, checks, then writes. Under real
+  concurrency, what breaks — and how would you make the check-and-debit atomic?
+
 ## What to submit
 
 1. **A pull request** against this repo. Write the description like a real one:
    what you built, the decisions you made and the alternatives you rejected,
-   what you'd do with more time, and how to test it.
-2. **Your AI session transcripts.** Export them and include them in the PR
+   what you'd do with more time, and how to test it. (This repo ships a PR
+   template to start from.)
+2. **Your AI session transcripts.** _Start capturing before you write any code —
+   it's easy to forget to hit record._ Export them and include them in the PR
    (e.g. an `/ai-transcripts` folder) or a linked doc. Claude Code: the session
    transcript / `.jsonl` or a copy-paste is fine. Cursor/Codex: export or
    screenshots. **Messy, exploratory prompting is fine** — we want your real
    process, not a cleaned-up version. **Redact any secrets, API keys, tokens, or
    personal information before sharing.**
-3. **A short reflection** (`REFLECTION.md`, ½–1 page):
+3. **A short reflection** — fill in the `REFLECTION.md` stub in this repo (½–1
+   page):
    - How did you use AI tools — what did you delegate vs. write/decide yourself?
    - Where did the AI suggest something you **overrode or corrected**, and why?
    - Which open decision above did you find hardest, and how did you resolve it?

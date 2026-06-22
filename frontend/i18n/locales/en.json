@@ -65,7 +65,8 @@
     "submit": "Send funds",
     "submitting": "Sending…",
     "success": "Sent {amount} to {name}.",
-    "amountError": "Enter an amount greater than 0."
+    "amountError": "Enter an amount greater than 0.",
+    "decimalsError": "Use at most 2 decimal places."
   },
   "spend": {
     "title": "Record a spend for {name}",
@@ -75,6 +76,7 @@
     "submit": "Record spend",
     "submitting": "Recording…",
     "success": "Recorded a spend of {amount}.",
-    "amountError": "Enter an amount greater than 0."
+    "amountError": "Enter an amount greater than 0.",
+    "decimalsError": "Use at most 2 decimal places."
   }
 }

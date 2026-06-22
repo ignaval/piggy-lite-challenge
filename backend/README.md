@@ -102,6 +102,14 @@ alembic upgrade head
 metadata from `SQLModel.metadata`, so autogenerate sees your models. The initial
 migration lives at `alembic/versions/0001_initial_schema.py`.
 
+On the local SQLite path the app **stamps** the freshly `create_all`'d database
+to the latest revision, so `alembic upgrade head` is a clean no-op rather than a
+"table already exists" error. When you add the spending-limits model, run
+`alembic revision --autogenerate` **before** you next start the app or reseed —
+otherwise `create_all` will have already created the new table and autogenerate
+will see nothing to do. (The Docker path sidesteps this: it runs migrations and
+never `create_all`s.)
+
 ---
 
 ## HTTP API
@@ -113,7 +121,7 @@ All amounts are decimal **strings** (e.g. `"10.00"`). Auth is
 | --- | --- | --- | --- |
 | `GET /api/v1/dependants` | — | `200 [{ id, first_name, balance }]` | current guardian's dependants |
 | `GET /api/v1/dependants/{id}` | — | `200 { id, first_name, balance, transactions[] }` | newest-first, last ~20; `404` if not yours |
-| `POST /api/v1/dependants/{id}/fund` | `{ amount, note? }` | `200 { transaction, balance }` | `400` on invalid amount (≤ 0, > 2 decimal places, or non-finite) |
+| `POST /api/v1/dependants/{id}/fund` | `{ amount, note? }` | `200 { transaction, balance }` | `400` on invalid amount (≤ 0 or > 2 decimal places); `422` if non-finite/non-numeric |
 | `POST /api/v1/dependants/{id}/spend` | `{ amount, note? }` | `200 { transaction, balance }` | `400` on invalid amount (as above) or insufficient balance |
 
 A `transaction` is `{ id, type: "FUNDING"|"SPEND", amount, note, created_at }`.

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 
 import { clearToken, getToken } from "@/lib/auth";
@@ -46,6 +47,7 @@ function extractDetail(body: unknown, fallback: string): string {
  */
 export function useAuthenticatedAPI() {
   const t = useTranslations("errors");
+  const router = useRouter();
   const request = useCallback(
     async <T>(
       path: string,
@@ -69,8 +71,10 @@ export function useAuthenticatedAPI() {
       }
 
       if (response.status === 401) {
-        // Token is missing/invalid — drop it so the app can route to /login.
+        // Token is missing/invalid — drop it and bounce to /login instead of
+        // leaving the user on a protected page showing a generic error.
         clearToken();
+        router.replace("/login");
         return { data: null, error: t("session") };
       }
 
@@ -96,7 +100,7 @@ export function useAuthenticatedAPI() {
 
       return { data: (body as T) ?? null, error: null };
     },
-    [t],
+    [t, router],
   );
 
   const get = useCallback(

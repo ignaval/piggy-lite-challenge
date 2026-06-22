@@ -65,7 +65,8 @@
     "submit": "Enviar fondos",
     "submitting": "Enviando…",
     "success": "Se enviaron {amount} a {name}.",
-    "amountError": "Ingresa un monto mayor que 0."
+    "amountError": "Ingresa un monto mayor que 0.",
+    "decimalsError": "Usa como máximo 2 decimales."
   },
   "spend": {
     "title": "Registrar un gasto de {name}",
@@ -75,6 +76,7 @@
     "submit": "Registrar gasto",
     "submitting": "Registrando…",
     "success": "Se registró un gasto de {amount}.",
-    "amountError": "Ingresa un monto mayor que 0."
+    "amountError": "Ingresa un monto mayor que 0.",
+    "decimalsError": "Usa como máximo 2 decimales."
   }
 }

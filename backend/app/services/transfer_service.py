@@ -55,8 +55,10 @@ def _validate_amount(amount: Decimal) -> Decimal:
 
     Enforces the repo-wide "2-decimal money" rule at the boundary so a direct
     API call can't move a balance by a sub-cent amount that would then render as
-    ``"0.00"``. Rejects non-finite, non-positive, and >2-decimal-place values —
-    each as a clean 400.
+    ``"0.00"``. Rejects non-positive and >2-decimal-place values as a clean 400.
+    (Non-finite amounts arriving over HTTP are normally rejected earlier, by the
+    schema's ``MoneyStr`` validator, as a 422; the ``is_finite`` guard here is
+    defense-in-depth for direct service calls.)
     """
     if not amount.is_finite():
         raise HTTPException(

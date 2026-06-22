@@ -33,11 +33,14 @@ def seed_demo(session: Session) -> Guardian:
     """Wipe, then create guardian Alex with dependants Mia (25.00) & Leo (8.00).
 
     Mia's seeded history is intentionally shaped for the spending-limits
-    feature: she has two SPEND entries inside the last 7 days and one older
-    spend (10 days ago). Once a candidate builds limits, a weekly "usage this
-    period" view has data immediately, and the older spend lets them verify that
-    a period window excludes it. (Transaction amounts are illustrative history
-    and do not need to reconcile exactly with the starting balances above.)
+    feature: two SPEND entries inside the last 7 days and one older spend (10
+    days ago). A weekly "usage this period" view therefore has data immediately,
+    and the older spend lets a candidate verify the window excludes it.
+
+    The ledger **reconciles** with the starting balance: Mia's entries net to
+    exactly 25.00 (35.00 funded - 4.00 - 3.50 - 2.50 spent) and Leo's to 8.00,
+    so "balance" and "sum of the ledger" agree — the invariant a real finance
+    system must hold.
 
     Returns the created guardian.
     """
@@ -57,14 +60,19 @@ def seed_demo(session: Session) -> Guardian:
     session.add(Balance(dependant_id=leo.id, amount=Decimal("8.00")))
 
     now = datetime.now(UTC)
+    # Amounts net to each dependant's starting balance (see docstring): Mia ends
+    # at 25.00, Leo at 8.00. Each funding predates that dependant's spends, so
+    # the running balance is valid at every step (never negative), not just at
+    # the end. Mia has spends inside *and* outside the last 7 days, so a weekly
+    # usage window has data to show — and a boundary to exclude.
     session.add_all(
         [
             LedgerTransaction(
                 dependant_id=mia.id,
                 type=TransactionType.FUNDING,
-                amount=Decimal("30.00"),
-                note="Weekly allowance",
-                created_at=now - timedelta(days=6),
+                amount=Decimal("35.00"),
+                note="Allowance",
+                created_at=now - timedelta(days=14),
             ),
             LedgerTransaction(
                 dependant_id=mia.id,
@@ -83,7 +91,7 @@ def seed_demo(session: Session) -> Guardian:
             LedgerTransaction(
                 dependant_id=mia.id,
                 type=TransactionType.SPEND,
-                amount=Decimal("6.00"),
+                amount=Decimal("2.50"),
                 note="Older toy (outside the last 7 days)",
                 created_at=now - timedelta(days=10),
             ),

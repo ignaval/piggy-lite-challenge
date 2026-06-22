@@ -35,9 +35,14 @@ export function TransferForm({
     event.preventDefault();
     setValidationError(null);
 
-    const normalized = normalizeAmount(amount);
+    const trimmed = amount.trim();
+    const normalized = normalizeAmount(trimmed);
     if (normalized === null) {
-      setValidationError(t("amountError"));
+      // normalizeAmount rejects both non-positive *and* >2-decimal amounts;
+      // show the message that actually matches so "1.005" doesn't read as
+      // "enter an amount greater than 0".
+      const tooManyDecimals = /^\d+\.\d{3,}$/.test(trimmed);
+      setValidationError(tooManyDecimals ? t("decimalsError") : t("amountError"));
       return;
     }
 

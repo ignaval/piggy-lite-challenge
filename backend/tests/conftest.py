@@ -17,9 +17,15 @@ from sqlmodel import Session, SQLModel, create_engine
 from sqlmodel.pool import StaticPool
 
 from app.api.deps import get_current_guardian
+from app.core.config import settings
 from app.core.db import get_session
 from app.main import app
 from app.models import Balance, Dependant, Guardian
+
+# Tests provision their own temp SQLite (see engine_fixture) and override
+# get_session, so the app's startup create_all/stamp would only touch the real
+# ./piggy_lite.db — and would pull Alembic into the unit-test path. Disable it.
+settings.CREATE_TABLES_ON_STARTUP = False
 
 
 @pytest.fixture(name="engine")

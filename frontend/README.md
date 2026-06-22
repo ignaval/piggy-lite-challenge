@@ -87,6 +87,13 @@ in the header (EN/ES) backed by a `PIGGY_LOCALE` cookie.
 This convention is graded — any new UI you add (including the spending-limits
 feature) must follow it.
 
+The starter surfaces the backend's existing error `detail` strings (e.g.
+_insufficient balance_) verbatim, as a dev-facing simplification. Any **new**
+user-facing error you introduce — like a "limit exceeded" message — must be
+localized too: return a stable error **code** from the backend and map it to an
+i18n key on the client, rather than rendering a hardcoded English string inside
+the Spanish UI.
+
 ## Testing
 
 ```bash

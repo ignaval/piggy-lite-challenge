@@ -20,7 +20,12 @@ export function formatMoney(amount: string | null | undefined): string {
     return `${CURRENCY_SYMBOL}0.00`;
   }
 
-  const formatted = parsed.toLocaleString(undefined, {
+  // Pin the locale (rather than the runtime default) so output is deterministic
+  // across machines, server vs. client render (no hydration drift), and CI.
+  // Piggy Lite is single-currency USD, so display is intentionally
+  // locale-independent; a multi-currency app would format per active locale and
+  // per asset via Intl.NumberFormat.
+  const formatted = parsed.toLocaleString("en-US", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
