@@ -96,7 +96,7 @@ You don't have to handle every one — but show you considered them.
 Per-category limits; a soft warning at e.g. 80%; concurrency safety; richer
 tests; polished UX.
 
-### We may dig into these in the live review
+### If we get to a live review, we may dig into these
 
 You won't build these, but be ready to talk through them:
 
@@ -139,8 +139,9 @@ against it.
 
 Engineering judgment on the open decisions; how effectively and **critically**
 you use AI tools; correctness and testing; fit with the existing code's
-conventions; and clear communication. In the live review you'll walk us through
-your PR, explain a couple of specific pieces, and make a small change with us.
+conventions; and clear communication. If we move forward, the live review is
+where you'll walk us through your PR, explain a couple of specific pieces, and
+make a small change with us.
 
 ## Ground rules
 
