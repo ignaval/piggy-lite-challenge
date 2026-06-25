@@ -12,7 +12,6 @@ finishing 100% of it.
   encourage it, and we ask you to **save your session transcripts** (see
   _What to submit_).
 - **Deliverables:** a pull request (in the private repo we provide) + your AI transcripts + a short reflection.
-- After you submit, we do a **~45-minute live review** together.
 
 ## The app
 
