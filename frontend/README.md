@@ -84,15 +84,13 @@ hooks (`useDependants`, `useDependant`, `useFund`, `useSpend`) wrap it in
 `next-intl`. Both locale files must stay in sync. There is a language switcher
 in the header (EN/ES) backed by a `PIGGY_LOCALE` cookie.
 
-This convention is graded — any new UI you add (including the spending-limits
-feature) must follow it.
+Any new UI you add must follow this convention.
 
 The starter surfaces the backend's existing error `detail` strings (e.g.
-_insufficient balance_) verbatim, as a dev-facing simplification. Any **new**
-user-facing error you introduce — like a "limit exceeded" message — must be
-localized too: return a stable error **code** from the backend and map it to an
-i18n key on the client, rather than rendering a hardcoded English string inside
-the Spanish UI.
+_insufficient balance_) verbatim, as a dev-facing simplification — you don't need
+to retrofit i18n onto those. But a **new** user-facing error you introduce — like
+a "limit exceeded" message — should be localized like the rest of your UI, not
+shown as hardcoded English in the Spanish UI.
 
 ## Testing
 

@@ -11,7 +11,7 @@ finishing 100% of it.
 - **You will use AI coding tools** (Claude Code, Codex, Cursor, etc.). We
   encourage it, and we ask you to **save your session transcripts** (see
   _What to submit_).
-- **Deliverables:** a pull request + your AI transcripts + a short reflection.
+- **Deliverables:** a pull request (in the private repo we provide) + your AI transcripts + a short reflection.
 - After you submit, we do a **~45-minute live review** together.
 
 ## The app
@@ -53,13 +53,11 @@ Let a guardian cap how much a dependant spends over a period.
    text in i18n** (no hardcoded strings — note the existing convention).
 
    _The backend's existing error `detail` strings (e.g. "Insufficient balance")
-   are developer-facing — the starter surfaces them to the user verbatim as a
-   deliberate simplification, and you don't need to retrofit i18n onto them. But
-   any **new** user-facing message you introduce — including a "limit exceeded"
-   error — must be localized. If you surface it from the backend, return a stable
-   error **code** (or otherwise make it machine-readable) and map it to an i18n
-   key on the client; don't render a hardcoded English `detail` inside the
-   Spanish UI._
+   are developer-facing — the starter surfaces them verbatim as a deliberate
+   simplification, and you don't need to retrofit i18n onto them. But any **new**
+   user-facing message you introduce — including a "limit exceeded" error — must
+   be localized like the rest of your UI; don't render hardcoded English inside
+   the Spanish UI. (How you wire that up is your call.)_
 
 **Scope notes (so you don't over-build).** Piggy Lite is **single-currency** —
 one implicit 2-decimal currency — and has **no dependant-facing UI or login**: a
