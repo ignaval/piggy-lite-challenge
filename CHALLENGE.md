@@ -115,17 +115,22 @@ You won't build these, but be ready to talk through them:
 
 ## What to submit
 
-1. **A pull request** against this repo. Write the description like a real one:
-   what you built, the decisions you made and the alternatives you rejected,
-   what you'd do with more time, and how to test it. (This repo ships a PR
-   template to start from.)
-2. **Your AI session transcripts.** _Start capturing before you write any code —
-   it's easy to forget to hit record._ Export them and include them in the PR
-   (e.g. an `/ai-transcripts` folder) or a linked doc. Claude Code: the session
+You'll work in a **private** GitHub repo we set up for you (generated from this
+template) — your code and transcripts stay private to you and the hiring team,
+not visible to other candidates. Please don't fork this public repo or open a PR
+against it.
+
+1. **A pull request in your private repo** (base its `main`). Write the
+   description like a real one: what you built, the decisions you made and the
+   alternatives you rejected, what you'd do with more time, and how to test it.
+   (The repo ships a PR template to start from.)
+2. **Your AI session transcripts**, committed to your private repo (e.g. an
+   `/ai-transcripts` folder) or linked. _Start capturing before you write any
+   code — it's easy to forget to hit record._ Claude Code: the session
    transcript / `.jsonl` or a copy-paste is fine. Cursor/Codex: export or
    screenshots. **Messy, exploratory prompting is fine** — we want your real
-   process, not a cleaned-up version. **Redact any secrets, API keys, tokens, or
-   personal information before sharing.**
+   process, not a cleaned-up version. Your repo is private, but still **redact
+   any secrets, API keys, tokens, or personal information** before committing.
 3. **A short reflection** — fill in the `REFLECTION.md` stub in this repo (½–1
    page):
    - How did you use AI tools — what did you delegate vs. write/decide yourself?

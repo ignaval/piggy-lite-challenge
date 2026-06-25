@@ -1,15 +1,7 @@
-"""Transfer service — the business rules for funding and spending live HERE.
+"""Transfer service — funding and spending logic.
 
-This is the integration point a candidate extends. The HTTP routes are thin:
-they parse input and delegate to ``fund_dependant`` / ``spend``. Keeping the
-rules in one place is deliberate so that:
-
-  * enforcement can't be bypassed by a different caller, and
-  * there's an obvious, single home for the **spending-limits** feature.
-
-👉 When you add spending limits, the enforcement belongs in ``spend`` (or a
-helper it calls), right alongside the existing "sufficient balance" check —
-*not* in the route. That guarantees every spend path goes through it.
+The HTTP routes are thin: they parse input and delegate to ``fund_dependant`` /
+``spend``.
 
 Each operation:
   1. resolves + authorizes the dependant (404 if not this guardian's),
@@ -121,8 +113,6 @@ def spend(
     """Debit a dependant's balance and record a SPEND transaction.
 
     Raises 400 on a non-positive / mis-scaled amount or insufficient funds.
-
-    👉 Spending-limit enforcement goes here (see module docstring).
     """
     _resolve_dependant(session, guardian, dependant_id)
     amount = _validate_amount(amount)

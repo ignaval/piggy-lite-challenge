@@ -5,8 +5,8 @@ dependants, and dependants spend from their own balance. SQLite by default, so
 it runs with zero setup.
 
 > This is a starter for a take-home. It ships the **fund / spend** flow only —
-> adding **spending limits** is the candidate's task. The obvious place to add
-> that logic is the service layer (see *How a spend flows today* below).
+> adding **spending limits** is the candidate's task. Read *How a spend flows
+> today* below to get oriented.
 
 ---
 
@@ -148,14 +148,13 @@ curl -s localhost:8000/api/v1/dependants -H "Authorization: Bearer $TOKEN"
 
 ## How a spend flows today
 
-This is the path to read first — and where the **spending-limits** feature
-belongs.
+This is the path to read first.
 
 1. **Route** — `app/api/routes/dependants.py` → `spend()`. It parses the request
    (`amount` as a `Decimal`, optional `note`) and the authenticated guardian,
    then **delegates** to the service. Routes hold no business rules.
-2. **Service** — `app/services/transfer_service.py` → `spend(...)`. This is the
-   single home for the rules:
+2. **Service** — `app/services/transfer_service.py` → `spend(...)`. It runs the
+   rules for the operation:
    - resolve + authorize the dependant (404 if it isn't this guardian's),
    - validate the amount — finite, `> 0`, at most 2 decimal places (400 otherwise),
    - validate **sufficient balance** (400 `"Insufficient balance"` otherwise),
@@ -166,11 +165,6 @@ belongs.
 
 Funding mirrors this via `fund_dependant(...)` (credits the balance, writes a
 `FUNDING` transaction).
-
-> **Adding limits?** Put enforcement in `spend(...)` (or a helper it calls),
-> right next to the balance check. Because every spend path goes through the
-> service, the rule can't be bypassed by another caller — that's why it lives
-> here and not in the route.
 
 ## Layout
 
@@ -186,7 +180,7 @@ backend/
     models.py                # SQLModel tables + TransactionType enum
     schemas.py               # request/response models (money as strings)
     crud.py                  # small data-access helpers
-    services/transfer_service.py  # fund/spend business rules  ← extend here
+    services/transfer_service.py  # fund/spend business rules
     seed_data.py             # shared seed/reset logic
     seed.py                  # `python -m app.seed`
   tests/

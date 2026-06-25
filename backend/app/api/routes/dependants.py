@@ -1,8 +1,7 @@
 """Dependant routes.
 
 Deliberately thin: read endpoints query via ``crud``; the fund/spend write
-endpoints delegate all rules to ``app.services.transfer_service``. To change how
-spending behaves (e.g. add limits), edit the service, not these handlers.
+endpoints delegate all rules to ``app.services.transfer_service``.
 """
 
 from __future__ import annotations
@@ -101,9 +100,7 @@ def spend(
 ) -> TransferResponse:
     """Debit a dependant's balance (creates a SPEND transaction).
 
-    Returns 400 on a non-positive amount or insufficient balance. This is the
-    flow candidates extend with spending-limit enforcement — see
-    ``app/services/transfer_service.py``.
+    Returns 400 on a non-positive amount or insufficient balance.
     """
     transaction = transfer_service.spend(
         session=session,

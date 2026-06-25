@@ -105,14 +105,9 @@ Frontend  components/SpendButton + TransferForm
                  └─ hooks/useAuthenticatedAPI.ts  →  POST /api/v1/dependants/{id}/spend
                                                        (Authorization: Bearer guardian-{id})
 Backend   app/api/routes/dependants.py   ← thin route, just parses + delegates
-            └─ app/services/transfer_service.py  →  spend(...)   ★ business rules live here
+            └─ app/services/transfer_service.py  →  spend(...)
                  └─ app/crud.py  →  balance + LedgerTransaction (atomic commit)
 ```
-
-> ★ **`backend/app/services/transfer_service.py` is the integration point.** The
-> existing "sufficient balance" check in `spend()` is the model for where new
-> spend rules belong. Keeping rules in the service (not the route or the UI)
-> means every spend path goes through them.
 
 ## Conventions worth knowing
 
